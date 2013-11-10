@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" 
+            type="text/css"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" 
+            type="text/css"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}" 
+            type="text/css"/>
+        <title>liwords</title>
+    </head>
+    <body>
+        <div class="container">
+            <h1><a href="#">liwords</a></h1>
+            <div class="liw-word">
+                &nbsp;<span id="liw-word-actual"></span>&nbsp;
+            </div>
+            <div class="liw-container">
+                {% for item in range(9) -%}
+                    <div id="liw-id-{{ item % 3 }}-{{ item // 3 }}" 
+                        class="liw-box-outer liw-free" 
+                        data-x="{{ item % 3}}" data-y="{{ item // 3}}">
+                        <div class="liw-box-inner">{{ word[item] }}</div>
+                    </div>
+                {% endfor -%}
+            </div>
+
+        </div>
+
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="{{ url_for('static', filename='js/custom.js') }}" 
+            type='text/javascript'></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" 
+            type='text/javascript'></script>
+        <script src="{{ url_for('static', filename='js/transition.js') }}" 
+            type='text/javascript'></script>
+        <script src="{{ url_for('static', filename='js/collapse.js') }}" 
+            type='text/javascript'></script>
+    </body>
+</html> 
