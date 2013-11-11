@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import random
 import sys
 
@@ -17,7 +19,10 @@ def word_lookup(word):
         else:
             start = pivot + 1
 
-    return False
+    if start >= len(dictionary[len(word)]):
+        return False
+
+    return word == dictionary[len(word)][start]
 
 def create_grid(word, grid_size):
     
@@ -92,8 +97,8 @@ def find_grid(grid_size, score_limit):
 
 def main():
 
-    if len(sys.argv) < 4:
-        print "Usage: %s <grid_size> <score_limit> <amount>" % sys.argv[0]
+    if len(sys.argv) < 5:
+        print "Usage: %s <grid_size> <score_limit> <amount> <output>" % sys.argv[0]
         sys.exit(0)
 
     # Initialize dictionary
@@ -109,6 +114,7 @@ def main():
     grid_size = int(sys.argv[1])
     score_limit = int(sys.argv[2])
     amount = int(sys.argv[3])
+    output = open(sys.argv[4], "wb")
 
     for i in range(amount):
         (grid, score, solutions) = find_grid(grid_size, score_limit)
@@ -119,7 +125,10 @@ def main():
             solutions_str += '"%s", ' % (solution.encode("utf-8"))
         solutions_str = solutions_str[:-2] + "]"
 
-        print '("%s", %d, %s)' % (grid_str, score, solutions_str)
+        result = '("%s", %d, %s)' % (grid_str, score, solutions_str)
+        output.write("%s\n" % result)
+
+    output.close()
 
 if __name__ == "__main__":
 
