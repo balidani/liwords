@@ -84,6 +84,29 @@
 }
 
 /*
+ * Timer
+ */
+.liw-sidebar {
+    float: right;
+    width: 200px;
+    height: 450px;
+    margin-top: 60px;
+    line-height: 25px;
+    text-align: center;
+}
+
+.liw-timer-seconds, .liw-score-points {
+    font-size: 80px;
+}
+
+.liw-score-max {
+    font-size: 30px;
+}
+.liw-timer-text, .liw-score-text {
+    font-size: 14px;
+}
+
+/*
  * Misc.
  */
 
@@ -109,4 +132,8 @@
 
 .no-display {
     display: none;
+}
+
+.no-float {
+    clear: both;
 }

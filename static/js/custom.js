@@ -1,6 +1,10 @@
+var gameOver = false;
+var time = 120;
+var score = 0;
 var puzzleObj = {};
 var currentWord = "", oldWord = "";
 var visited = [];
+var foundWords = [];
 
 /*
  * Functions that handle Letter selection
@@ -55,6 +59,13 @@ var resetWord = function() {
     $('#liw-word-actual-overlay').text(oldWord);
     
     if (checkCorrect(currentWord.toLowerCase())) {
+      // Word is correct
+      if (foundWords.indexOf(currentWord) < 0) {
+        foundWords.push(currentWord);
+        score++;
+        $(".liw-score-points").text(score);
+      }
+
       $('#liw-word-actual-overlay').removeClass("liw-fail");
       $('#liw-word-actual-overlay').addClass("liw-success");
     } else {
@@ -131,10 +142,14 @@ $(function() {
 
   var mouseDown = false;
 
+  // Get puzzle details
   var puzzleUrl = "/puzzle/" + $.cookie("session");
   $.get(puzzleUrl, function(data) {
     if (data.success) {
       puzzleObj = data;
+
+      // Set max score
+      $(".liw-score-max").text("/" + puzzleObj.hashes.length)
     }
   });
 
@@ -172,5 +187,21 @@ $(function() {
       if(e.which === 1) mouseDown = false;
       resetWord();
   });
+
+  // Timer countdown
+  countDown = setInterval(function() {
+    time--;
+    $(".liw-timer-seconds").text(time);
+
+    if (time == 0) {
+      gameOver = true;
+
+      // Remove handlers
+      $('.liw-box-inner').unbind("mousedown");
+      $('.liw-box-inner').unbind("mouseover");
+
+      clearInterval(countDown);
+    }
+  }, 1000);
 
 });
