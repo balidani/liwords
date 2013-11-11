@@ -1,4 +1,5 @@
-var _word = "";
+var puzzleObj = {};
+var currentWord = "", oldWord = "";
 var visited = [];
 
 /*
@@ -28,22 +29,44 @@ var toggleSelected = function(letterObj) {
   }
 }
 
+
 /*
  * Functions that handle word formation
  */
 
 var getWord = function() {
-  return _word;
+  return currentWord;
 }
 
 var setWord = function(newWord) {
-  _word = newWord;
-  $('#liw-word-actual').text(_word);
+  currentWord = newWord;
+  $('#liw-word-actual').text(currentWord);
 }
 
 var resetWord = function() {
-  _word = "";
-  $('#liw-word-actual').text(_word);
+  
+  /*
+   * Test if the word is correct before removing it
+   */
+  if (currentWord.length >= 3) {
+    oldWord = currentWord;
+    $('#liw-word-actual-overlay').text("");
+    $('#liw-word-actual-overlay').show();
+    $('#liw-word-actual-overlay').text(oldWord);
+    
+    if (checkCorrect(currentWord.toLowerCase())) {
+      $('#liw-word-actual-overlay').removeClass("liw-fail");
+      $('#liw-word-actual-overlay').addClass("liw-success");
+    } else {
+      $('#liw-word-actual-overlay').removeClass("liw-success");
+      $('#liw-word-actual-overlay').addClass("liw-fail");
+    }
+
+    $('#liw-word-actual-overlay').fadeOut("slow");
+  }
+
+  currentWord = "";
+  $('#liw-word-actual').text(currentWord);
   $('.liw-box-outer').removeClass("liw-selected").addClass("liw-free");
   visited = [];
 }
@@ -91,12 +114,29 @@ var addLetter = function(letterObj) {
   visited.push(letterObj);
 }
 
+var checkCorrect = function(word) {
+  var hash = hex_md5(puzzleObj.salt + word)
+
+  if (puzzleObj.hashes.indexOf(hash) != -1) {
+    return true;
+  }
+
+  return false;
+}
+
 /*
  * jQuery entry-point
  */
 $(function() {
 
   var mouseDown = false;
+
+  var puzzleUrl = "/puzzle/" + $.cookie("session");
+  $.get(puzzleUrl, function(data) {
+    if (data.success) {
+      puzzleObj = data;
+    }
+  });
 
   // Mouse down handler
   $('.liw-box-inner').mousedown(function(e) {
