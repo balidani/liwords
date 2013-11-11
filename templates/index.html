@@ -11,7 +11,7 @@
         <title>liwords</title>
     </head>
     <body>
-        <div class="container">
+        <div id="liw-container" class="container">
             <h1><a href="#">liwords</a></h1>
             <div class="liw-word-container">
                 <div class="liw-word">
@@ -30,7 +30,12 @@
                     </div>
                 {% endfor -%}
             </div>
+        </div>
 
+        <div class="navbar-default navbar-fixed-bottom">
+            <div class="container">
+                <a href="https://github.com/balidani/liwords" class="navbar-text pull-right">View on GitHub</a>
+            </div>
         </div>
 
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
