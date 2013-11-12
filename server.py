@@ -96,7 +96,7 @@ def index():
     }
 
     # Render template
-    render = render_template("index.html", word=puzzle.upper())
+    render = render_template("index.html", word=puzzle)
     
     resp = make_response(render)
     resp.set_cookie("session", session_id)
