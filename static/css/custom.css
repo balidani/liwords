@@ -16,7 +16,7 @@
 }
 
 /*
- * Letter boxes
+ * Letter box display
  */
 
 .liw-box-outer {
@@ -32,6 +32,7 @@
 
     border-radius: 5px;
     font-size: 80px;
+    text-transform: uppercase;
 }
 
 .liw-box-inner {
@@ -45,7 +46,7 @@
 }
 
 /*
- * Formed word
+ * Formed word display
  */
 
 .liw-word-container {
@@ -82,22 +83,19 @@
     top: 0px;
     left: 0px;
     text-align: justify;
+    font-size: 20px;
 }
 
 #liw-word-actual, #liw-word-actual-overlay {
     text-align: center;
     font-size: 60px;
-    padding: 0;
-    margin: 0;
-}
-
-#liw-word-actual-solutions {
-    font-size: 20px;
+    text-transform: uppercase;
 }
 
 /*
- * Timer
+ * Timer and score display
  */
+
 .liw-sidebar {
     float: right;
     width: 200px;
@@ -118,34 +116,20 @@
     font-size: 14px;
 }
 
+
+/*
+ * Color theme
+ */
+
+.liw-free { background-color: #eee; }
+.liw-selected { background-color: #59e; }
+
+.liw-found { color: #ccc; }
+.liw-missed { color: #333;}
+
 /*
  * Misc.
  */
 
-.liw-free {
-    background-color: #eee;
-}
-
-.liw-selected {
-    background-color: #59e;
-}
-
-.liw-success {
-    color: #3e6;
-}
-
-.liw-fail {
-    color: #e24;
-}
-
-.liw-clear-float {
-    clear: both;
-}
-
-.no-display {
-    display: none;
-}
-
-.no-float {
-    clear: both;
-}
+.no-display { display: none; }
+.no-float { clear: both; }

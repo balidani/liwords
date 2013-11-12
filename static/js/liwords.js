@@ -49,7 +49,7 @@ var getWord = function() {
 
 var setWord = function(newWord) {
   currentWord = newWord;
-  $('#liw-word-actual').text(currentWord);
+  $("#liw-word-actual").text(currentWord);
 }
 
 /*
@@ -69,29 +69,35 @@ var checkHash = function(word) {
  * Check if a word is correct and handle the display of success/failure
  */
 var checkWord = function() {
-  
+
+  var failColor = "#e24";
+  var seenColor = "#fe2";
+  var successColor = "#3e6";
+
   if (currentWord.length >= 3) {
     oldWord = currentWord;
-    $('#liw-word-actual-overlay').text("");
-    $('#liw-word-actual-overlay').show();
-    $('#liw-word-actual-overlay').text(oldWord);
-    
-    if (checkHash(currentWord.toLowerCase())) {
+    $("#liw-word-actual-overlay").text("");
+    $("#liw-word-actual-overlay").text(oldWord);
+    if (checkHash(currentWord)) {
       // Word is correct
       if (foundWords.indexOf(currentWord) < 0) {
         foundWords.push(currentWord);
+
         score++;
         $(".liw-score-points").text(score);
+        $("#liw-word-actual-overlay").css("color", successColor);
+      
+      } else {
+        // Word has already been found
+        $("#liw-word-actual-overlay").css("color", seenColor);
       }
 
-      $('#liw-word-actual-overlay').removeClass("liw-fail");
-      $('#liw-word-actual-overlay').addClass("liw-success");
     } else {
-      $('#liw-word-actual-overlay').removeClass("liw-success");
-      $('#liw-word-actual-overlay').addClass("liw-fail");
+      $("#liw-word-actual-overlay").css("color", failColor);
     }
 
-    $('#liw-word-actual-overlay').fadeOut("slow");
+    $("#liw-word-actual-overlay").show();
+    $("#liw-word-actual-overlay").fadeOut("slow");
   }
 
 }
@@ -105,13 +111,13 @@ var resetWord = function() {
   checkWord();
 
   currentWord = "";
-  $('#liw-word-actual').text(currentWord);
-  $('.liw-box-outer').removeClass("liw-selected").addClass("liw-free");
+  $("#liw-word-actual").text(currentWord);
+  $(".liw-box-outer").removeClass("liw-selected").addClass("liw-free");
   visited = [];
 }
 
 /*
- * Add a letter to the current word if it's a legal move and siplay it
+ * Add a letter to the current word if it"s a legal move and siplay it
  */
 var addLetter = function(letterObj) {
   
@@ -123,7 +129,7 @@ var addLetter = function(letterObj) {
     var lastParent = lastVisited.parent();
     var currentParent = letterObj.parent();
 
-    // Check if it's already selected
+    // Check if it"s already selected
     if (currentParent.hasClass("liw-selected")) {
 
       secondLastVisited = visited[visited.length - 2];
@@ -158,9 +164,24 @@ var addLetter = function(letterObj) {
   visited.push(letterObj);
 }
 
-var displaySolution = function(solution) {
-  var solutionText = solution.join(", ");
-  $("#liw-word-actual-solutions").text(solutionText).fadeIn();
+var displaySolution = function(solutions) {
+
+  console.log(solutions);
+  console.log(foundWords);
+  for (var i = 0; i < solutions.length; ++i) {
+    var solutionSpan = $("<span/>").text(solutions[i] + " ");
+
+    // Add class according to successful find
+    if (foundWords.indexOf(solutions[i]) < 0) {
+      solutionSpan.addClass("liw-missed");
+    } else {
+      solutionSpan.addClass("liw-found");
+    }
+
+    $(".liw-word-solutions").append(solutionSpan);
+  }
+
+  $(".liw-word-solutions").fadeIn();
 
 }
 
@@ -187,8 +208,8 @@ var gameTimer = function() {
  */
 var gameOver = function() {
   // Remove handlers
-  $('.liw-box-inner').unbind("mousedown");
-  $('.liw-box-inner').unbind("mouseover");
+  $(".liw-box-inner").unbind("mousedown");
+  $(".liw-box-inner").unbind("mouseover");
 
   // Retrieve solutions
   var solutionUrl = "/solution/" + $.cookie("session");
@@ -229,7 +250,7 @@ $(function() {
   });
 
   // Mouse down handler
-  $('.liw-box-inner').mousedown(function(e) {
+  $(".liw-box-inner").mousedown(function(e) {
       if(e.which === 1) mouseDown = true;
 
     if (getWord() == "")
@@ -239,7 +260,7 @@ $(function() {
   });
 
   // Mouse over handler
-  $('.liw-box-inner').mouseover(function(e) {
+  $(".liw-box-inner").mouseover(function(e) {
     
     if (!mouseDown)
       return;
