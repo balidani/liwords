@@ -40,6 +40,9 @@ def solution(session_id):
     result["success"] = True
     result["solution"] = session["solution"]
 
+    # Remove used session
+    del sessions[session_id]
+
     return jsonify(result)
 
 @app.route("/puzzle/<session_id>")
