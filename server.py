@@ -5,6 +5,7 @@ import hashlib
 import random
 import string
 import sys
+import time
 
 from flask import Flask
 from flask import jsonify
@@ -20,22 +21,26 @@ puzzles = []
 def random_value(size):
     return ''.join([random.choice(string.ascii_lowercase + string.digits) for i in range(size)])
 
-# Not used for now
-# Might be used for server side validation later
+@app.route("/solution/<session_id>")
+def solution(session_id):
+    result = {}
+    timestamp = time.time()
 
-# @app.route("/solution/<session_id>/<word>")
-# def solution(session_id, word):
-#     result = {}
-# 
-#     if session_id not in sessions:
-#         result["success"] = False
-#     else: 
-#         result["success"] = (word in sessions[session_id])
-# 
-#         print word
-#         print sessions[session_id]
-# 
-#     return jsonify(result)
+    if session_id not in sessions:
+        result["success"] = False
+        return jsonify(result)
+
+    session = sessions[session_id]
+
+    # Magic value, move to config
+    if timestamp - session["timestamp"] < 120.0:
+        result["success"] = False
+        return jsonify(result)
+
+    result["success"] = True
+    result["solution"] = session["solution"]
+
+    return jsonify(result)
 
 @app.route("/puzzle/<session_id>")
 def puzzle(session_id):
@@ -44,13 +49,16 @@ def puzzle(session_id):
 
     if session_id not in sessions:
         response["success"] = False
+        return jsonify(result)
 
-    else:
-        session = sessions[session_id]
+    # Initialize puzzle start timestamp
+    sessions[session_id]["timestamp"] = time.time()
 
-        response["success"] = True
-        response["salt"] = session["salt"]
-        response["hashes"] = session["hashes"]
+    session = sessions[session_id]
+
+    response["success"] = True
+    response["salt"] = session["salt"]
+    response["hashes"] = session["hashes"]
     
     return jsonify(response)
 
@@ -77,6 +85,7 @@ def index():
     # Create new session
     session_id = random_value(32)
     sessions[session_id] = {
+        "timestamp": 0,
         "puzzle": puzzle,
         "solution": solutions,
         "hashes": hashed_solutions,

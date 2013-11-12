@@ -1,4 +1,3 @@
-var gameOver = false;
 var time = 120;
 var score = 0;
 var puzzleObj = {};
@@ -6,9 +5,13 @@ var currentWord = "", oldWord = "";
 var visited = [];
 var foundWords = [];
 
-/*
- * Functions that handle Letter selection
- */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                           *
+ *  Functions that handle letter box display                                 *
+ *                                                                           *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 var setSelected = function(letterObj) {
   var letterParent = letterObj.parent();
     
@@ -34,9 +37,11 @@ var toggleSelected = function(letterObj) {
 }
 
 
-/*
- * Functions that handle word formation
- */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                           *
+ *  Functions that handle word formation and display                         *
+ *                                                                           *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 var getWord = function() {
   return currentWord;
@@ -47,18 +52,31 @@ var setWord = function(newWord) {
   $('#liw-word-actual').text(currentWord);
 }
 
-var resetWord = function() {
+/*
+ * Check if a supplied word is correct
+ */
+var checkHash = function(word) {
+  var hash = hex_md5(puzzleObj.salt + word)
+
+  if (puzzleObj.hashes.indexOf(hash) != -1) {
+    return true;
+  }
+
+  return false;
+}
+
+/*
+ * Check if a word is correct and handle the display of success/failure
+ */
+var checkWord = function() {
   
-  /*
-   * Test if the word is correct before removing it
-   */
   if (currentWord.length >= 3) {
     oldWord = currentWord;
     $('#liw-word-actual-overlay').text("");
     $('#liw-word-actual-overlay').show();
     $('#liw-word-actual-overlay').text(oldWord);
     
-    if (checkCorrect(currentWord.toLowerCase())) {
+    if (checkHash(currentWord.toLowerCase())) {
       // Word is correct
       if (foundWords.indexOf(currentWord) < 0) {
         foundWords.push(currentWord);
@@ -76,12 +94,25 @@ var resetWord = function() {
     $('#liw-word-actual-overlay').fadeOut("slow");
   }
 
+}
+
+/*
+ * Reset the current word
+ */
+var resetWord = function() {
+  
+  //Test if the word is correct before removing it
+  checkWord();
+
   currentWord = "";
   $('#liw-word-actual').text(currentWord);
   $('.liw-box-outer').removeClass("liw-selected").addClass("liw-free");
   visited = [];
 }
 
+/*
+ * Add a letter to the current word if it's a legal move and siplay it
+ */
 var addLetter = function(letterObj) {
   
   var lastVisited = visited[visited.length - 1];
@@ -111,8 +142,10 @@ var addLetter = function(letterObj) {
     }
 
     // Check if the letter is reachable
-    var xDiff = parseInt(currentParent.data("x")) - parseInt(lastParent.data("x"));
-    var yDiff = parseInt(currentParent.data("y")) - parseInt(lastParent.data("y"));
+    var xDiff = parseInt(currentParent.data("x")) 
+      - parseInt(lastParent.data("x"));
+    var yDiff = parseInt(currentParent.data("y")) 
+      - parseInt(lastParent.data("y"));
     
     if (Math.abs(xDiff) > 1 || Math.abs(yDiff) > 1)
       return;
@@ -125,19 +158,58 @@ var addLetter = function(letterObj) {
   visited.push(letterObj);
 }
 
-var checkCorrect = function(word) {
-  var hash = hex_md5(puzzleObj.salt + word)
+var displaySolution = function(solution) {
+  var solutionText = solution.join(", ");
+  $("#liw-word-actual-solutions").text(solutionText).fadeIn();
 
-  if (puzzleObj.hashes.indexOf(hash) != -1) {
-    return true;
-  }
+}
 
-  return false;
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                           *
+ *  Functions that handle puzzle events                                      *
+ *                                                                           *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/*
+ * Timer event
+ */
+var gameTimer = function() {
+  time--;
+  $(".liw-timer-seconds").text(time);
+
+  if (time == 0)
+    gameOver();
 }
 
 /*
- * jQuery entry-point
+ * Handle the end of the game
  */
+var gameOver = function() {
+  // Remove handlers
+  $('.liw-box-inner').unbind("mousedown");
+  $('.liw-box-inner').unbind("mouseover");
+
+  // Retrieve solutions
+  var solutionUrl = "/solution/" + $.cookie("session");
+  $.get(solutionUrl, function(data) {
+    if (data.success) {
+      displaySolution(data.solution);
+    } else {
+      gameOver();
+    }
+  });
+
+  clearInterval(countDown);
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                           *
+ *  Main jQuery entry point                                                  *
+ *                                                                           *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 $(function() {
 
   var mouseDown = false;
@@ -150,6 +222,9 @@ $(function() {
 
       // Set max score
       $(".liw-score-max").text("/" + puzzleObj.hashes.length)
+
+      // Start timer
+      countDown = setInterval(gameTimer, 1000);
     }
   });
 
@@ -187,21 +262,5 @@ $(function() {
       if(e.which === 1) mouseDown = false;
       resetWord();
   });
-
-  // Timer countdown
-  countDown = setInterval(function() {
-    time--;
-    $(".liw-timer-seconds").text(time);
-
-    if (time == 0) {
-      gameOver = true;
-
-      // Remove handlers
-      $('.liw-box-inner').unbind("mousedown");
-      $('.liw-box-inner').unbind("mouseover");
-
-      clearInterval(countDown);
-    }
-  }, 1000);
 
 });
