@@ -1,9 +1,8 @@
-var time = 120;
-var score = 0;
 var puzzleObj = {};
 var currentWord = "", oldWord = "";
 var visited = [];
 var foundWords = [];
+var score = 0, time = 0;
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -164,10 +163,11 @@ var addLetter = function(letterObj) {
   visited.push(letterObj);
 }
 
+/*
+ * Display the solution words above the grid
+ */
 var displaySolution = function(solutions) {
 
-  console.log(solutions);
-  console.log(foundWords);
   for (var i = 0; i < solutions.length; ++i) {
     var solutionSpan = $("<span/>").text(solutions[i] + " ");
 
@@ -191,6 +191,35 @@ var displaySolution = function(solutions) {
  *  Functions that handle puzzle events                                      *
  *                                                                           *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/*
+ * Get a puzzle, display it and start the timer
+ */
+var gameStart = function() {
+  
+  // Get puzzle details
+  var puzzleUrl = "/puzzle/" + $.cookie("session");
+  $.get(puzzleUrl, function(data) {
+    if (data.success) {
+      puzzleObj = data;
+
+      // Set puzzle time
+      time = puzzleObj.time;
+
+      // Set max score
+      $(".liw-score-max").text("/" + puzzleObj.hashes.length);
+
+      // Display puzzle on the grid
+      var children = $(".liw-container > .liw-box-outer").children();
+      for (var i = 0; i < children.length; ++i) {
+        $(children[i]).text(puzzleObj.puzzle.charAt(i));
+      }
+
+      // Start timer
+      countDown = setInterval(gameTimer, 1000);
+    }
+  });
+}
 
 /*
  * Timer event
@@ -235,18 +264,9 @@ $(function() {
 
   var mouseDown = false;
 
-  // Get puzzle details
-  var puzzleUrl = "/puzzle/" + $.cookie("session");
-  $.get(puzzleUrl, function(data) {
-    if (data.success) {
-      puzzleObj = data;
-
-      // Set max score
-      $(".liw-score-max").text("/" + puzzleObj.hashes.length)
-
-      // Start timer
-      countDown = setInterval(gameTimer, 1000);
-    }
+  // Start button handler
+  $("#liw-start-button").click(function(e) {
+    gameStart();
   });
 
   // Mouse down handler
@@ -269,7 +289,6 @@ $(function() {
 
     return false;
   });
-
 
   // This is to disable text selection
   $(".liw-container").mousedown(function(e) {

@@ -116,6 +116,12 @@
     font-size: 14px;
 }
 
+/*
+ * Start button
+ */
+.liw-start {
+    padding-top: 20px;
+}
 
 /*
  * Color theme
