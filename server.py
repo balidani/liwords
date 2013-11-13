@@ -60,8 +60,10 @@ def puzzle(session_id):
     session = sessions[session_id]
 
     response["success"] = True
-    response["salt"] = session["salt"]
+    response["puzzle"] = session["puzzle"]
     response["hashes"] = session["hashes"]
+    response["salt"] = session["salt"]
+    response["time"] = session["time"]
     
     return jsonify(response)
 
@@ -89,6 +91,7 @@ def index():
     session_id = random_value(32)
     sessions[session_id] = {
         "timestamp": 0,
+        "time": 120,
         "puzzle": puzzle,
         "solution": solutions,
         "hashes": hashed_solutions,
