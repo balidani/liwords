@@ -19,10 +19,11 @@ sessions = {}
 puzzles = []
 
 def random_value(size):
-    return ''.join([random.choice(string.ascii_lowercase + string.digits) for i in range(size)])
+    return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
 
 @app.route("/solution/<session_id>")
 def solution(session_id):
+    """Return the solution for a session if the time elapsed"""
     result = {}
     timestamp = time.time()
 
@@ -33,7 +34,7 @@ def solution(session_id):
     session = sessions[session_id]
 
     # Magic value, move to config
-    if timestamp - session["timestamp"] < 120.0:
+    if timestamp - session["timestamp"] < float(session["time"]):
         result["success"] = False
         return jsonify(result)
 
@@ -45,52 +46,30 @@ def solution(session_id):
 
     return jsonify(result)
 
-@app.route("/puzzle/<session_id>")
-def puzzle(session_id):
+
+@app.route("/puzzle/")
+def puzzle():
+    """Create a new session with a random puzzle"""
 
     response = {}
-
-    if session_id not in sessions:
-        response["success"] = False
-        return jsonify(result)
-
-    # Initialize puzzle start timestamp
-    sessions[session_id]["timestamp"] = time.time()
-
-    session = sessions[session_id]
-
-    response["success"] = True
-    response["puzzle"] = session["puzzle"]
-    response["hashes"] = session["hashes"]
-    response["salt"] = session["salt"]
-    response["time"] = session["time"]
-    
-    return jsonify(response)
-
-@app.route("/")
-def index():
-
-    # Should be a parameter
-    grid_size = 3
 
     # Select random puzzle
     (puzzle, _score, solutions) = random.choice(puzzles)
 
     # Create salt and hashes
-    salt = random_value(32)
     hashed_solutions = []
+    salt = random_value(32)
     md5 = hashlib.md5(salt)
+
     for solution in solutions:
         m = md5.copy()
         m.update(solution.encode("utf-8"))
-        hash = m.hexdigest()
-        hashed_solutions.append(hash)
-
+        hashed_solutions.append(m.hexdigest())
 
     # Create new session
-    session_id = random_value(32)
-    sessions[session_id] = {
-        "timestamp": 0,
+    session_id = random_value(16)
+    session = {
+        "timestamp": time.time(),
         "time": 120,
         "puzzle": puzzle,
         "solution": solutions,
@@ -98,11 +77,27 @@ def index():
         "salt": salt
     }
 
-    # Render template
-    render = render_template("index.html", word=puzzle)
+    sessions[session_id] = session
+
+    response["success"] = True
+    response["session_id"] = session_id
+    response["puzzle"] = session["puzzle"]
+    response["hashes"] = session["hashes"]
+    response["salt"] = session["salt"]
+    response["time"] = session["time"]
     
+    return jsonify(response)
+
+
+@app.route("/")
+def index():
+
+    # Should be a parameter
+    grid_size = 3
+
+    # Render template
+    render = render_template("index.html")
     resp = make_response(render)
-    resp.set_cookie("session", session_id)
 
     return resp
 

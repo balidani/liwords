@@ -198,8 +198,7 @@ var displaySolution = function(solutions) {
 var gameStart = function() {
   
   // Get puzzle details
-  var puzzleUrl = "/puzzle/" + $.cookie("session");
-  $.get(puzzleUrl, function(data) {
+  $.get("/puzzle/", function(data) {
     if (data.success) {
       puzzleObj = data;
 
@@ -241,7 +240,7 @@ var gameOver = function() {
   $(".liw-box-inner").unbind("mouseover");
 
   // Retrieve solutions
-  var solutionUrl = "/solution/" + $.cookie("session");
+  var solutionUrl = "/solution/" + puzzleObj.session_id;
   $.get(solutionUrl, function(data) {
     if (data.success) {
       displaySolution(data.solution);
