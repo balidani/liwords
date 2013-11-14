@@ -9,6 +9,7 @@ liwords uses the [Flask](http://flask.pocoo.org/) framework with the [Jinja2](ht
 
     easy_install Flask
     easy_install jinja2
+    easy_install dataset
 
 The wordlist (not provided here) has to be present in the wordlist directory. It has to contain a list of words, one on each line.
 
