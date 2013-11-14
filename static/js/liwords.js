@@ -206,8 +206,11 @@ var gameStart = function() {
     if (data.success) {
       puzzleObj = data;
 
-      // Set puzzle time
+      // Set puzzle time and reset score
       time = puzzleObj.time;
+      
+      score = 0;
+      $(".liw-score-points").text(score);
 
       // Set max score
       $(".liw-score-max").text("/" + puzzleObj.hashes.length);
