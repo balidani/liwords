@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-
+import dataset
+import json
 import random
 import sys
 
@@ -97,8 +97,8 @@ def find_grid(grid_size, score_limit):
 
 def main():
 
-    if len(sys.argv) < 5:
-        print "Usage: %s <grid_size> <score_limit> <amount> <output>" % sys.argv[0]
+    if len(sys.argv) < 4:
+        print "Usage: %s <grid_size> <score_limit> <amount>" % sys.argv[0]
         sys.exit(0)
 
     # Initialize dictionary
@@ -107,6 +107,7 @@ def main():
 
         for word in data:
             word_utf8 = word.decode("utf-8")
+
             if len(word_utf8) not in dictionary:
                 dictionary[len(word_utf8)] = []
             dictionary[len(word_utf8)].append(word_utf8)
@@ -114,21 +115,23 @@ def main():
     grid_size = int(sys.argv[1])
     score_limit = int(sys.argv[2])
     amount = int(sys.argv[3])
-    output = open(sys.argv[4], "wb")
+
+    db = dataset.connect('sqlite:///liwords.db')
+    table = db["puzzle"]
 
     for i in range(amount):
-        (grid, score, solutions) = find_grid(grid_size, score_limit)
-        grid_str = ''.join(grid).encode("utf-8")
-        
-        solutions_str = "["
-        for solution in list(solutions):
-            solutions_str += '"%s", ' % (solution.encode("utf-8"))
-        solutions_str = solutions_str[:-2] + "]"
+        (grid, score, solution_set) = find_grid(grid_size, score_limit)
 
-        result = '("%s", %d, %s)' % (grid_str, score, solutions_str)
-        output.write("%s\n" % result)
+        puzzle = unicode(''.join(grid))
+        solution = [unicode(s) for s in solution_set]
 
-    output.close()
+        result = {
+            "puzzle": puzzle,
+            "score": score,
+            "solution": json.dumps(solution)
+        }
+
+        table.insert(result)
 
 if __name__ == "__main__":
 
