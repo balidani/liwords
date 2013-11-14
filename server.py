@@ -16,6 +16,7 @@ app = Flask(__name__)
 
 sessions = {}
 puzzles = []
+language = {}
 
 def random_value(size):
     return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
@@ -95,7 +96,7 @@ def index():
     grid_size = 3
 
     # Render template
-    render = render_template("index.html")
+    render = render_template("index.html", l=language)
     resp = make_response(render)
 
     return resp
@@ -104,12 +105,21 @@ def index():
 if __name__ == "__main__":
 
     # Connect to database
-    db = dataset.connect('sqlite:///liwords.db')
+    db = dataset.connect("sqlite:///liwords.db")
 
     # Initialize puzzles
     for puzzle in db["puzzle"]:
         puzzle["solution"] = json.loads(puzzle["solution"])
         puzzles.append(puzzle)
+
+    # Load the language file
+    if len(sys.argv) < 2:
+        lang_file = "lang.json"
+    else:
+        lang_file = sys.argv[1]
+
+    with open(lang_file, "rb") as fp:
+        language = json.loads(fp.read())
 
     # Start web server
     app.run(host="0.0.0.0", port=5000, debug=True)

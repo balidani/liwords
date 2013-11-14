@@ -24,10 +24,10 @@
             </div>
             <div class="liw-sidebar">
                 <span class="liw-timer-seconds">0</span><br/>
-                <span class="liw-timer-text">seconds</span>
+                <span class="liw-timer-text">{{ l["seconds"] }}</span>
                 <br/><br/><br/><br/>
                 <span class="liw-score-points">0</span><span class="liw-score-max"></span><br/>
-                <span class="liw-score-text">points</span>
+                <span class="liw-score-text">{{ l["points"] }}</span>
             </div>
             <div cass="no-float"></div>
             <div class="liw-container">
@@ -40,7 +40,7 @@
                 {% endfor -%}
             </div>
             <div class="liw-start text-center">
-                <a id="liw-start-button" class="btn btn-success">New Game</a>
+                <a id="liw-start-button" class="btn btn-success">{{ l["new_game"] }}</a>
             </div>
         </div>
 
