@@ -1,2 +1,3 @@
 *.pem
 wordlist/*
+liwords.db
