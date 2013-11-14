@@ -3,6 +3,7 @@ var currentWord = "", oldWord = "";
 var visited = [];
 var foundWords = [];
 var score = 0, time = 0;
+var gameOn = false;
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -197,6 +198,9 @@ var displaySolution = function(solutions) {
  */
 var gameStart = function() {
   
+  if (gameOn)
+    return;
+
   // Get puzzle details
   $.get("/puzzle/", function(data) {
     if (data.success) {
@@ -208,11 +212,16 @@ var gameStart = function() {
       // Set max score
       $(".liw-score-max").text("/" + puzzleObj.hashes.length);
 
+      // Hide possible previous solutions
+      $(".liw-word-solutions").empty();
+
       // Display puzzle on the grid
       var children = $(".liw-container > .liw-box-outer").children();
       for (var i = 0; i < children.length; ++i) {
         $(children[i]).text(puzzleObj.puzzle.charAt(i));
       }
+
+      gameOn = true;
 
       // Start timer
       countDown = setInterval(gameTimer, 1000);
@@ -235,9 +244,9 @@ var gameTimer = function() {
  * Handle the end of the game
  */
 var gameOver = function() {
-  // Remove handlers
-  $(".liw-box-inner").unbind("mousedown");
-  $(".liw-box-inner").unbind("mouseover");
+
+  // Disable handlers
+  gameOn = false;
 
   // Retrieve solutions
   var solutionUrl = "/solution/" + puzzleObj.session_id;
@@ -268,9 +277,18 @@ $(function() {
     gameStart();
   });
 
+  // This is to disable text selection
+  $(".liw-container").mousedown(function(e) {
+    return false;
+  });
+
   // Mouse down handler
   $(".liw-box-inner").mousedown(function(e) {
-      if(e.which === 1) mouseDown = true;
+
+    if(e.which === 1) mouseDown = true;
+
+    if (!gameOn)
+      return false;
 
     if (getWord() == "")
       addLetter($(this));
@@ -281,16 +299,14 @@ $(function() {
   // Mouse over handler
   $(".liw-box-inner").mouseover(function(e) {
     
+    if (!gameOn)
+      return false;
+
     if (!mouseDown)
-      return;
+      return false;
 
     addLetter($(this));
 
-    return false;
-  });
-
-  // This is to disable text selection
-  $(".liw-container").mousedown(function(e) {
     return false;
   });
 
