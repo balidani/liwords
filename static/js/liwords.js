@@ -5,6 +5,9 @@ var foundWords = [];
 var score = 0, time = 0;
 var gameOn = false;
 
+// TODO: Eliminate magic value
+var gridSize = 3;
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                           *
@@ -202,6 +205,73 @@ var displayPuzzle = function(puzzle) {
 
 }
 
+/*
+ * Shuffle the puzzle
+ */
+var shuffleGrid = function() {
+
+  var originalPuzzle = puzzleObj.puzzle;
+  var grid = Array(gridSize);
+
+  for (var i = 0; i < grid.length; ++i) {
+    grid[i] = originalPuzzle.substr(i * gridSize, gridSize).split("");
+  }
+
+  // Rotate array
+  var rotateGrid = function(grid) {
+
+    var gridCopy = Array(gridSize);
+
+    for (var i = 0; i < gridSize; ++i) {
+      
+      gridCopy[i] = Array(gridSize);
+
+      for (var j = 0; j < gridSize; ++j) {
+        gridCopy[i][gridSize - (j+1)] = grid[j][i];
+      }
+    }
+
+    return gridCopy;
+  }
+
+  // Mirror array
+  var mirrorGrid = function(grid, mirrorX, mirrorY) {
+
+    var gridCopy = Array(gridSize);
+
+    for (var i = 0; i < gridSize; ++i) {
+
+      var yCoord = mirrorY ? (gridSize - (i+1)) : i;
+      gridCopy[i] = grid[yCoord].slice();
+
+      if (!mirrorX) continue;
+
+      for (var j = 0; j < gridSize; ++j) {
+        gridCopy[i].reverse();
+      }
+    }
+
+    return gridCopy;
+  }
+
+  // Rotate random number of times (0 - 3)
+  for (var i = 0; i < Math.random() * 4; ++i) {
+    grid = rotateGrid(grid);
+  }
+
+  // Mirror randomly
+  grid = mirrorGrid(grid, Math.random() < 0.5, Math.random() < 0.5);
+
+  // Create puzzle string
+  var newPuzzle = "";
+  for (var i = 0; i < gridSize; ++i) {
+    newPuzzle += grid[i].join("");
+  }
+
+  puzzleObj.puzzle = newPuzzle;
+  displayPuzzle(puzzleObj.puzzle);
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                           *
@@ -213,20 +283,15 @@ var displayPuzzle = function(puzzle) {
  * Get a puzzle, display it and start the timer
  */
 var gameStart = function() {
-  
-  if (gameOn)
-    return;
 
   var gameLength = 120;
   var gameLengthStr = $("#liw-game-length").val();
 
   if (gameLengthStr != "") {
-    gameLength = 60 * parseInt(gameLengthStr);
+    gameLength = 60 * parseFloat(gameLengthStr);
   }
 
-  console.log(gameLengthStr);
-
-  var url = "/puzzle/" + gameLength;
+  var url = "/puzzle/" + parseInt(gameLength);
 
   // Get puzzle details
   $.get(url, function(data) {
@@ -300,7 +365,18 @@ $(function() {
 
   // Start button handler
   $("#liw-start-button").click(function(e) {
+    if (gameOn)
+      return;
+
     gameStart();
+  });
+
+  // Shuffle button handler
+  $("#liw-shuffle-button").click(function(e) {
+    if (!gameOn)
+      return;
+
+    shuffleGrid();
   });
 
   // This is to disable text selection
