@@ -47,8 +47,8 @@ def solution(session_id):
     return jsonify(result)
 
 
-@app.route("/puzzle/")
-def puzzle():
+@app.route("/puzzle/<int:game_length>")
+def puzzle(game_length):
     """Create a new session with a random puzzle"""
 
     response = {}
@@ -70,7 +70,7 @@ def puzzle():
     session_id = random_value(16)
     session = {
         "timestamp": time.time(),
-        "time": 120,
+        "time": int(game_length),
         "puzzle": puzzle["puzzle"],
         "solution": puzzle["solution"],
         "hashes": hashed_solutions,

@@ -22,7 +22,15 @@
                 <div class="liw-word-solutions no-display">
                 </div>
             </div>
-            <div class="liw-sidebar">
+            <div class="liw-sidebar-left">
+                <div class="input-group">
+                    <input id="liw-game-length" type="text" class="form-control" placeholder="2">
+                    <span class="input-group-addon">{{ l["min"] }}</span>
+                </div>
+                <br/>
+                <a id="liw-start-button" class="btn btn-success form-control">{{ l["new_game"] }}</a>
+            </div>
+            <div class="liw-sidebar-right">
                 <span class="liw-timer-seconds">0</span><br/>
                 <span class="liw-timer-text">{{ l["seconds"] }}</span>
                 <br/><br/><br/><br/>
@@ -38,9 +46,6 @@
                         <div class="liw-box-inner">&nbsp;</div>
                     </div>
                 {% endfor -%}
-            </div>
-            <div class="liw-start text-center">
-                <a id="liw-start-button" class="btn btn-success">{{ l["new_game"] }}</a>
             </div>
         </div>
 

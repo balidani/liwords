@@ -134,6 +134,9 @@ var addLetter = function(letterObj) {
 
       secondLastVisited = visited[visited.length - 2];
 
+      // Fix me: TypeError: Cannot call method 'text' of undefined 
+      // Happens when selecting one letter, leaving the container and hovering back
+
       // Backtrack
       if (letterObj.text() == secondLastVisited.text()) {
         unsetSelected(lastVisited);
@@ -186,6 +189,19 @@ var displaySolution = function(solutions) {
 
 }
 
+/*
+ * Display the puzzle
+ */
+var displayPuzzle = function(puzzle) {
+
+  // Display puzzle on the grid
+  var children = $(".liw-container > .liw-box-outer").children();
+  for (var i = 0; i < children.length; ++i) {
+    $(children[i]).text(puzzle.charAt(i));
+  }
+
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                           *
@@ -201,14 +217,25 @@ var gameStart = function() {
   if (gameOn)
     return;
 
+  var gameLength = 120;
+  var gameLengthStr = $("#liw-game-length").val();
+
+  if (gameLengthStr != "") {
+    gameLength = 60 * parseInt(gameLengthStr);
+  }
+
+  console.log(gameLengthStr);
+
+  var url = "/puzzle/" + gameLength;
+
   // Get puzzle details
-  $.get("/puzzle/", function(data) {
+  $.get(url, function(data) {
     if (data.success) {
       puzzleObj = data;
 
       // Set puzzle time and reset score
       time = puzzleObj.time;
-      
+
       score = 0;
       $(".liw-score-points").text(score);
 
@@ -218,11 +245,7 @@ var gameStart = function() {
       // Hide possible previous solutions
       $(".liw-word-solutions").empty();
 
-      // Display puzzle on the grid
-      var children = $(".liw-container > .liw-box-outer").children();
-      for (var i = 0; i < children.length; ++i) {
-        $(children[i]).text(puzzleObj.puzzle.charAt(i));
-      }
+      displayPuzzle(puzzleObj.puzzle);
 
       gameOn = true;
 

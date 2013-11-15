@@ -87,16 +87,26 @@
 }
 
 /*
- * Timer and score display
+ * Sidebars: Timer and score display
  */
 
-.liw-sidebar {
+.liw-sidebar-right {
     float: right;
+    margin-right: 10px;
     width: 200px;
     height: 450px;
-    margin-top: 60px;
-    line-height: 25px;
+    line-height: 20px;
+    padding-top: 45px;
     text-align: center;
+}
+
+.liw-sidebar-left {
+    float: left;
+    margin-left: 40px;
+    width: 120px;
+    height: 450px;
+    padding-top: 25px;
+    text-align: right;
 }
 
 .liw-timer-seconds, .liw-score-points {
@@ -108,13 +118,6 @@
 }
 .liw-timer-text, .liw-score-text {
     font-size: 14px;
-}
-
-/*
- * Start button
- */
-.liw-start {
-    padding-top: 20px;
 }
 
 /*
