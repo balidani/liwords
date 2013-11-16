@@ -23,16 +23,42 @@
                 </div>
             </div>
             <div class="liw-sidebar-left">
-                <div class="input-group">
-                    <input id="liw-game-length" type="text" class="form-control" placeholder="2">
-                    <span class="input-group-addon">{{ l["min"] }}</span>
+                <div class="form-horizontal">
+                    <div class="form-group liw-pre-game">
+                        <div class="input-group">
+                            <input id="liw-game-length" type="text" 
+                                class="form-control" placeholder="2">
+                            <span class="input-group-addon">{{ l["min"] }}</span>
+                        </div>
+                    </div>
+                    <!--<div class="form-group liw-pre-game">
+                        <div class="liw-checkbox checkbox">
+                            <label>
+                                <input id="liw-checkbox-online" type="checkbox"> {{ l["online"] }}
+                            </label>
+                        </div>
+                        <div class="liw-checkbox checkbox no-display">
+                            <label>
+                                <input id="liw-checkbox-public" type="checkbox"> {{ l["public"] }}
+                            </label>
+                        </div>
+                    </div>-->
+                    <div class="form-group liw-pre-game">
+                        <button id="liw-start-button" class="btn btn-info form-control">
+                            {{ l["new_game"] }}
+                        </button>
+                    </div>
+                    <div class="form-group liw-post-game no-display">
+                        <button id="liw-stop-button" class="btn btn-info form-control">
+                            {{ l["stop_game"] }}
+                        </button>
+                    </div>
+                    <div class="form-group liw-post-game no-display">
+                        <button id="liw-shuffle-button" class="btn btn-info form-control">
+                            <span class="glyphicon glyphicon-refresh"></span>
+                        </button>
+                    </div>
                 </div>
-                <br/>
-                <a id="liw-start-button" class="btn btn-info form-control">{{ l["new_game"] }}</a>
-                <br/><br/>
-                <a id="liw-shuffle-button" class="btn btn-info form-control">
-                    <span class="glyphicon glyphicon-refresh"></span>
-                </a>
             </div>
             <div class="liw-sidebar-right">
                 <span class="liw-timer-seconds">0</span><br/>

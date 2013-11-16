@@ -2,5 +2,8 @@
     "seconds": "seconds",
     "points": "points",
     "new_game": "New Game",
-    "min": "min"
+    "stop_game": "Stop Game",
+    "min": "min",
+    "online": "Online",
+    "public": "Public"
 }

@@ -33,10 +33,12 @@ def solution(session_id):
 
     session = sessions[session_id]
 
-    # Magic value, move to config
-    if timestamp - session["timestamp"] < float(session["time"]):
-        result["success"] = False
-        return jsonify(result)
+
+    # This check will not be needed when the final evaluation is on the host side 
+    #
+    # if timestamp - session["timestamp"] < float(session["time"]):
+    #     result["success"] = False
+    #     return jsonify(result)
 
     result["success"] = True
     result["solution"] = session["solution"]

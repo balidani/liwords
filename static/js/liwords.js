@@ -310,8 +310,13 @@ var gameStart = function() {
       // Hide possible previous solutions
       $(".liw-word-solutions").empty();
 
-      displayPuzzle(puzzleObj.puzzle);
+      // Hide pre-game buttons
+      // Show post-game buttons
+      $(".liw-pre-game").fadeOut("medium", function() {
+        $(".liw-post-game").fadeIn();
+      });
 
+      displayPuzzle(puzzleObj.puzzle);
       gameOn = true;
 
       // Start timer
@@ -338,18 +343,29 @@ var gameOver = function() {
 
   // Disable handlers
   gameOn = false;
+  
+  // TODO: move time handling (and display) to functions
+  time = 0;
+  $(".liw-timer-seconds").text(time);
+
+  clearInterval(countDown);
 
   // Retrieve solutions
   var solutionUrl = "/solution/" + puzzleObj.session_id;
   $.get(solutionUrl, function(data) {
     if (data.success) {
       displaySolution(data.solution);
+
+      // Hide post-game buttons
+      // Show pre-game buttons
+      $(".liw-post-game").fadeOut("medium", function() {
+        $(".liw-pre-game").fadeIn();
+      });
+
     } else {
       gameOver();
     }
   });
-
-  clearInterval(countDown);
 }
 
 
@@ -369,6 +385,14 @@ $(function() {
       return;
 
     gameStart();
+  });
+
+  // Stop button handler
+  $("#liw-stop-button").click(function(e) {
+    if (!gameOn)
+      return;
+
+    gameOver();
   });
 
   // Shuffle button handler
