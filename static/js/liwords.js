@@ -2,7 +2,8 @@ var puzzleObj = {};
 var currentWord = "", oldWord = "";
 var visited = [];
 var foundWords = [];
-var score = 0, time = 0;
+var score = 0;
+var time = 0;
 var gameOn = false;
 
 // TODO: Eliminate magic value
@@ -39,6 +40,24 @@ var toggleSelected = function(letterObj) {
   }
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *                                                                           *
+ *  Functions that handle time display                                       *
+ *                                                                           *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+var setTime = function(value) {
+  time = value;
+  $(".liw-timer-seconds").text(time);
+}
+
+var decTime = function() {
+  setTime(time - 1);
+}
+
+var getTime = function() {
+  return time;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                           *
@@ -299,7 +318,7 @@ var gameStart = function() {
       puzzleObj = data;
 
       // Set puzzle time and reset score
-      time = puzzleObj.time;
+      setTime(puzzleObj.time);
 
       score = 0;
       $(".liw-score-points").text(score);
@@ -329,10 +348,9 @@ var gameStart = function() {
  * Timer event
  */
 var gameTimer = function() {
-  time--;
-  $(".liw-timer-seconds").text(time);
+  decTime();
 
-  if (time == 0)
+  if (getTime() == 0)
     gameOver();
 }
 
@@ -345,8 +363,7 @@ var gameOver = function() {
   gameOn = false;
   
   // TODO: move time handling (and display) to functions
-  time = 0;
-  $(".liw-timer-seconds").text(time);
+  setTime(0);
 
   foundWords = [];
 
