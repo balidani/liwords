@@ -81,12 +81,16 @@ def puzzle(game_length):
 
     sessions[session_id] = session
 
+    # Compute the maximal score for the puzzle
+    max_score = sum([len(x) - 2 for x in puzzle["solution"]])
+
     response["success"] = True
     response["session_id"] = session_id
     response["puzzle"] = session["puzzle"]
     response["hashes"] = session["hashes"]
     response["salt"] = session["salt"]
     response["time"] = session["time"]
+    response["max_score"] = max_score
     
     return jsonify(response)
 

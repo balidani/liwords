@@ -1,6 +1,7 @@
 {
     "seconds": "seconds",
-    "points": "points",
+    "percent": "percent",
+    "words": "words",
     "new_game": "New Game",
     "stop_game": "Stop Game",
     "min": "min",

@@ -112,15 +112,17 @@
  * Timer and score display
  */
 
-.liw-timer-seconds, .liw-score-points {
+.liw-timer-seconds, .liw-found-words, .liw-score-points {
     font-size: 80px;
 }
-
-.liw-score-max {
+.liw-found-words-max, .liw-score-percent {
     font-size: 30px;
 }
 .liw-timer-text, .liw-score-text {
     font-size: 14px;
+}
+.liw-sidebar-right-space {
+    height: 50px;
 }
 
 /*

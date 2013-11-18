@@ -63,9 +63,16 @@
             <div class="liw-sidebar-right">
                 <span class="liw-timer-seconds">0</span><br/>
                 <span class="liw-timer-text">{{ l["seconds"] }}</span>
-                <br/><br/><br/><br/>
-                <span class="liw-score-points">0</span><span class="liw-score-max"></span><br/>
-                <span class="liw-score-text">{{ l["points"] }}</span>
+                
+                <div class="liw-sidebar-right-space"></div>
+
+                <span class="liw-found-words">0</span><span class="liw-found-words-max"></span><br/>
+                <span class="liw-found-words-text">{{ l["words"] }}</span>
+                
+                <div class="liw-sidebar-right-space"></div>
+                
+                <span class="liw-score-points">0</span><span class="liw-score-percent">%</span><br/>
+                <span class="liw-score-text">{{ l["percent"] }}</span>
             </div>
             <div cass="no-float"></div>
             <div class="liw-container">

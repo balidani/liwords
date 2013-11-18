@@ -42,7 +42,7 @@ var toggleSelected = function(letterObj) {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                                                                           *
- *  Functions that handle time display                                       *
+ *  Functions that handle time and score display                             *
  *                                                                           *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -57,6 +57,11 @@ var decTime = function() {
 
 var getTime = function() {
   return time;
+}
+
+var addScore = function(word) {
+  score += word.length - 2;
+  $(".liw-score-points").text(Math.round(100 * score / puzzleObj.max_score));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -105,8 +110,9 @@ var checkWord = function() {
       if (foundWords.indexOf(currentWord) < 0) {
         foundWords.push(currentWord);
 
-        score++;
-        $(".liw-score-points").text(score);
+        addScore(currentWord);
+
+        $(".liw-found-words").text(foundWords.length);
         $("#liw-word-actual-overlay").css("color", successColor);
       
       } else {
@@ -321,10 +327,13 @@ var gameStart = function() {
       setTime(puzzleObj.time);
 
       score = 0;
+      foundWords = [];
+
+      $(".liw-found-words").text(foundWords.length);
       $(".liw-score-points").text(score);
 
-      // Set max score
-      $(".liw-score-max").text("/" + puzzleObj.hashes.length);
+      // Set max words
+      $(".liw-found-words-max").text("/" + puzzleObj.hashes.length);
 
       // Hide possible previous solutions
       $(".liw-word-solutions").empty();
@@ -361,11 +370,7 @@ var gameOver = function() {
 
   // Disable handlers
   gameOn = false;
-  
-  // TODO: move time handling (and display) to functions
   setTime(0);
-
-  foundWords = [];
 
   clearInterval(countDown);
 
