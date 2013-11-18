@@ -348,6 +348,8 @@ var gameOver = function() {
   time = 0;
   $(".liw-timer-seconds").text(time);
 
+  foundWords = [];
+
   clearInterval(countDown);
 
   // Retrieve solutions
