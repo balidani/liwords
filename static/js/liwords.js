@@ -312,6 +312,8 @@ var gameStart = function() {
   var gameLength = 120;
   var gameLengthStr = $("#liw-game-length").val();
 
+  gameOn = true;
+
   if (gameLengthStr != "") {
     gameLength = 60 * parseFloat(gameLengthStr);
   }
@@ -345,7 +347,6 @@ var gameStart = function() {
       });
 
       displayPuzzle(puzzleObj.puzzle);
-      gameOn = true;
 
       // Start timer
       countDown = setInterval(gameTimer, 1000);
