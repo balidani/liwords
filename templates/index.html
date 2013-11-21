@@ -6,89 +6,91 @@
             type="text/css"/>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" 
             type="text/css"/>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}" 
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/liwords.css') }}" 
             type="text/css"/>
         <title>liwords</title>
     </head>
     <body>
-        <div id="main-container" class="container">
-            <div class="liw-word-container">
-                <div class="liw-word">
-                    &nbsp;<span id="liw-word-actual"></span>&nbsp;
-                </div>
-                <div class="liw-word-overlay">
-                    &nbsp;<span id="liw-word-actual-overlay"></span>&nbsp;
-                </div>
-                <div class="liw-word-solutions no-display">
-                </div>
+        <div class="liw-main-container container">
+            <div class="liw-overlay-container">
+                <div id="liw-word-real" class="liw-word"></div>
+                <div id="liw-word-result" class="liw-word"></div>
+                <div class="liw-solutions"></div>
             </div>
-            <div class="liw-sidebar-left">
-                <div class="form-horizontal">
-                    <div class="form-group liw-pre-game">
-                        <div class="input-group">
-                            <input id="liw-game-length" type="text" 
-                                class="form-control" placeholder="2">
-                            <span class="input-group-addon">{{ l["min"] }}</span>
+            <div class="row no-pad">
+                <div class="col-md-2 col-md-offset-1">
+                    <div class="liw-left-side">
+                        <div class="form-horizontal">
+                            <div class="form-group liw-pre-game">
+                                <div class="input-group">
+                                    <input id="liw-game-length" type="text" 
+                                        class="form-control" placeholder="2">
+                                    <span class="input-group-addon">{{ l["min"] }}</span>
+                                </div>
+                            </div>
+                            <div class="form-group liw-pre-game">
+                                <button id="liw-start-button" class="btn btn-info form-control">
+                                    {{ l["new_game"] }}
+                                </button>
+                            </div>
+                            <div class="form-group liw-post-game no-display">
+                                <button id="liw-stop-button" class="btn btn-info form-control">
+                                    {{ l["stop_game"] }}
+                                </button>
+                            </div>
+                            <div class="form-group liw-post-game no-display">
+                                <button id="liw-shuffle-button" class="btn btn-info form-control">
+                                    <span class="glyphicon glyphicon-refresh"></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <!--<div class="form-group liw-pre-game">
-                        <div class="liw-checkbox checkbox">
-                            <label>
-                                <input id="liw-checkbox-online" type="checkbox"> {{ l["online"] }}
-                            </label>
-                        </div>
-                        <div class="liw-checkbox checkbox no-display">
-                            <label>
-                                <input id="liw-checkbox-public" type="checkbox"> {{ l["public"] }}
-                            </label>
-                        </div>
-                    </div>-->
-                    <div class="form-group liw-pre-game">
-                        <button id="liw-start-button" class="btn btn-info form-control">
-                            {{ l["new_game"] }}
-                        </button>
-                    </div>
-                    <div class="form-group liw-post-game no-display">
-                        <button id="liw-stop-button" class="btn btn-info form-control">
-                            {{ l["stop_game"] }}
-                        </button>
-                    </div>
-                    <div class="form-group liw-post-game no-display">
-                        <button id="liw-shuffle-button" class="btn btn-info form-control">
-                            <span class="glyphicon glyphicon-refresh"></span>
-                        </button>
+                </div>
+                <div class="col-md-6">
+                    <div class="liw-grid">
+                        {% for item in range(9) -%}
+                            <div id="liw-id-{{ item % 3 }}-{{ item // 3 }}" 
+                                class="liw-cell-outer liw-free" 
+                                data-x="{{ item % 3}}" data-y="{{ item // 3}}">
+                                <div class="liw-cell-inner">&nbsp;</div>
+                            </div>
+                        {% endfor -%}
                     </div>
                 </div>
-            </div>
-            <div class="liw-sidebar-right">
-                <span class="liw-timer-seconds">0</span><br/>
-                <span class="liw-timer-text">{{ l["seconds"] }}</span>
-                
-                <div class="liw-sidebar-right-space"></div>
-
-                <span class="liw-found-words">0</span><span class="liw-found-words-max"></span><br/>
-                <span class="liw-found-words-text">{{ l["words"] }}</span>
-                
-                <div class="liw-sidebar-right-space"></div>
-                
-                <span class="liw-score-points">0</span><span class="liw-score-percent">%</span><br/>
-                <span class="liw-score-text">{{ l["percent"] }}</span>
-            </div>
-            <div cass="no-float"></div>
-            <div class="liw-container">
-                {% for item in range(9) -%}
-                    <div id="liw-id-{{ item % 3 }}-{{ item // 3 }}" 
-                        class="liw-box-outer liw-free" 
-                        data-x="{{ item % 3}}" data-y="{{ item // 3}}">
-                        <div class="liw-box-inner">&nbsp;</div>
+                <div class="col-md-2">
+                    <div class="liw-right-side">
+                        <div class="liw-score">
+                            <div class="liw-score-line">
+                                <span id="liw-time-value" class="liw-text-large">0</span>
+                                <span class="liw-text-medium">&nbsp;</span>
+                            </div>
+                            <div class="liw-text-small">{{ l["seconds"] }}</div>
+                        </div>
+                        <div class="liw-score">
+                            <div class="liw-score-line">
+                                <span id="liw-words-found" class="liw-text-large">0</span>
+                                <span class="liw-text-medium">
+                                    /<span id="liw-words-max">0</span>
+                                </span>
+                            </div>
+                            <div class="liw-text-small">{{ l["words"] }}</div>
+                        </div>
+                        <div class="liw-score">
+                            <div class="liw-score-line">
+                                <span id="liw-score-value" class="liw-text-large">0</span>
+                                <span class="liw-text-medium">%</span>
+                            </div>
+                            <div class="liw-text-small">{{ l["percent"] }}</div>
+                        </div>
                     </div>
-                {% endfor -%}
+                </div>
             </div>
         </div>
 
         <div class="navbar-default navbar-fixed-bottom">
             <div class="container">
-                <a href="https://github.com/balidani/liwords" class="navbar-text pull-right">View on GitHub</a>
+                <a href="https://github.com/balidani/liwords" 
+                    class="navbar-text pull-right">View on GitHub</a>
             </div>
         </div>
 

@@ -1,0 +1,110 @@
+/* Main containers */
+.liw-main-container {
+    margin-top: 20px;
+}
+
+.liw-overlay-container {
+    position: relative;
+    width: 600px;
+    height: 120px;
+    margin: 0 auto;
+}
+.liw-overlay-container div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+/* Sidebars */
+.liw-left-side, .liw-right-side {
+    padding: 0px;
+    margin-top: 8px;
+}
+
+.liw-left-side {
+    float: right;
+    width: 80px;
+}
+
+
+/* Word display (at the top) */
+.liw-word {
+    text-align: center;
+    font-size: 50px;
+    text-transform: uppercase;
+}
+
+/* Grid */
+.liw-grid {
+    width: 100%;
+    text-align: center;
+}
+.liw-cell-outer {
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+
+    line-height: 130px;
+    margin: 4px;
+    margin-top: 8px;
+
+    border-radius: 10px;
+    font-size: 70px;
+    text-transform: uppercase;
+
+    background-color: #eee;
+}
+.liw-cell-inner {
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    margin: auto;
+    margin-top: 15px;
+}
+.liw-cell-selected {
+    background-color: #59e !important;
+}
+
+/* Scores */
+.liw-score {
+    width: 100%;
+    text-align: center;
+}
+.liw-text-large {
+    font-size: 70px;
+}
+.liw-text-medium {
+    font-size: 30px;
+}
+.liw-text-small {
+    font-size: 14px;
+    margin-top: -20px;
+}
+
+/* Solutions */
+.liw-solutions {
+    font-size: 16px;
+}
+.liw-solution-box {
+    display: inline-block;
+    margin: 3px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 4px;
+}
+.liw-solution-box:hover {
+    color: #fff;
+}
+.liw-solution-found { 
+    background-color: #bea;
+}
+.liw-solution-missed { 
+    background-color: #fab;
+}
+
+/* Misc. */
+.no-display {
+    display: none;
+}

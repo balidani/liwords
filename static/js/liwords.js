@@ -18,25 +18,23 @@ var gridSize = 3;
 
 var setSelected = function(letterObj) {
   var letterParent = letterObj.parent();
-    
-  letterParent.removeClass("liw-free");
-  letterParent.addClass("liw-selected");
+
+  letterParent.addClass("liw-cell-selected");
 }
 
 var unsetSelected = function(letterObj) {
   var letterParent = letterObj.parent();
   
-  letterParent.removeClass("liw-selected");
-  letterParent.addClass("liw-free");
+  letterParent.removeClass("liw-cell-selected");
 }
 
 var toggleSelected = function(letterObj) {
   var letterParent = letterObj.parent();
   
-  if (letterParent.hasClass("liw-free")) {
-    setSelected(letterObj);
-  } else if (letterParent.hasClass("liw-selected")) {
+  if (letterParent.hasClass("liw-cell-selected")) {
     unsetSelected(letterObj);
+  } else {
+    setSelected(letterObj);
   }
 }
 
@@ -48,7 +46,7 @@ var toggleSelected = function(letterObj) {
 
 var setTime = function(value) {
   time = value;
-  $(".liw-timer-seconds").text(time);
+  $("#liw-time-value").text(time);
 }
 
 var decTime = function() {
@@ -61,7 +59,7 @@ var getTime = function() {
 
 var addScore = function(word) {
   score += word.length - 2;
-  $(".liw-score-points").text(Math.round(100 * score / puzzleObj.max_score));
+  $("#liw-score-value").text(Math.round(100 * score / puzzleObj.max_score));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -76,7 +74,7 @@ var getWord = function() {
 
 var setWord = function(newWord) {
   currentWord = newWord;
-  $("#liw-word-actual").text(currentWord);
+  $("#liw-word-real").text(currentWord);
 }
 
 /*
@@ -97,14 +95,16 @@ var checkHash = function(word) {
  */
 var checkWord = function() {
 
+  // TODO: rewrite this with CSS classes
+
   var failColor = "#e24";
   var seenColor = "#fe2";
   var successColor = "#3e6";
 
   if (currentWord.length >= 3) {
     oldWord = currentWord;
-    $("#liw-word-actual-overlay").text("");
-    $("#liw-word-actual-overlay").text(oldWord);
+    $("#liw-word-result").text("");
+    $("#liw-word-result").text(oldWord);
     if (checkHash(currentWord)) {
       // Word is correct
       if (foundWords.indexOf(currentWord) < 0) {
@@ -112,20 +112,20 @@ var checkWord = function() {
 
         addScore(currentWord);
 
-        $(".liw-found-words").text(foundWords.length);
-        $("#liw-word-actual-overlay").css("color", successColor);
+        $("#liw-words-found").text(foundWords.length);
+        $("#liw-word-result").css("color", successColor);
       
       } else {
         // Word has already been found
-        $("#liw-word-actual-overlay").css("color", seenColor);
+        $("#liw-word-result").css("color", seenColor);
       }
 
     } else {
-      $("#liw-word-actual-overlay").css("color", failColor);
+      $("#liw-word-result").css("color", failColor);
     }
 
-    $("#liw-word-actual-overlay").show();
-    $("#liw-word-actual-overlay").fadeOut("slow");
+    $("#liw-word-result").show();
+    $("#liw-word-result").fadeOut("slow");
   }
 
 }
@@ -139,8 +139,8 @@ var resetWord = function() {
   checkWord();
 
   currentWord = "";
-  $("#liw-word-actual").text(currentWord);
-  $(".liw-box-outer").removeClass("liw-selected").addClass("liw-free");
+  $("#liw-word-real").text(currentWord);
+  $(".liw-cell-outer").removeClass("liw-cell-selected");
   visited = [];
 }
 
@@ -158,7 +158,7 @@ var addLetter = function(letterObj) {
     var currentParent = letterObj.parent();
 
     // Check if it"s already selected
-    if (currentParent.hasClass("liw-selected")) {
+    if (currentParent.hasClass("liw-cell-selected")) {
 
       secondLastVisited = visited[visited.length - 2];
 
@@ -201,20 +201,20 @@ var addLetter = function(letterObj) {
 var displaySolution = function(solutions) {
 
   for (var i = 0; i < solutions.length; ++i) {
-    var solutionDiv = $("<div/>").append(solutions[i] + " ×");
+    var solutionDiv = $("<span/>").append(solutions[i] + " ×");
     solutionDiv.addClass("liw-solution-box");
 
     // Add class according to successful find
     if (foundWords.indexOf(solutions[i]) < 0) {
-      solutionDiv.addClass("liw-missed");
+      solutionDiv.addClass("liw-solution-missed");
     } else {
-      solutionDiv.addClass("liw-found");
+      solutionDiv.addClass("liw-solution-found");
     }
 
-    $(".liw-word-solutions").append(solutionDiv);
+    $(".liw-solutions").append(solutionDiv);
   }
 
-  $(".liw-word-solutions").fadeIn();
+  $(".liw-solutions").fadeIn();
 
 }
 
@@ -224,7 +224,7 @@ var displaySolution = function(solutions) {
 var displayPuzzle = function(puzzle) {
 
   // Display puzzle on the grid
-  var children = $(".liw-container > .liw-box-outer").children();
+  var children = $(".liw-grid > .liw-cell-outer").children();
   for (var i = 0; i < children.length; ++i) {
     $(children[i]).text(puzzle.charAt(i));
   }
@@ -332,14 +332,14 @@ var gameStart = function() {
       score = 0;
       foundWords = [];
 
-      $(".liw-found-words").text(foundWords.length);
-      $(".liw-score-points").text(score);
+      $("#liw-words-found").text(foundWords.length);
+      $("#liw-score-value").text(score);
 
       // Set max words
-      $(".liw-found-words-max").text("/" + puzzleObj.hashes.length);
+      $("#liw-words-max").text(puzzleObj.hashes.length);
 
       // Hide possible previous solutions
-      $(".liw-word-solutions").empty();
+      $(".liw-solutions").empty();
 
       // Hide pre-game buttons
       // Show post-game buttons
@@ -430,12 +430,12 @@ $(function() {
   });
 
   // This is to disable text selection
-  $(".liw-container").mousedown(function(e) {
+  $(".liw-grid").mousedown(function(e) {
     return false;
   });
 
   // Mouse down handler
-  $(".liw-box-inner").mousedown(function(e) {
+  $(".liw-cell-inner").mousedown(function(e) {
 
     if(e.which === 1) mouseDown = true;
 
@@ -449,7 +449,7 @@ $(function() {
   });
 
   // Mouse over handler
-  $(".liw-box-inner").mouseover(function(e) {
+  $(".liw-cell-inner").mouseover(function(e) {
     
     if (!gameOn)
       return false;
