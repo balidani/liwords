@@ -1,14 +1,15 @@
 import argparse
 import dataset
+import datetime
 import sys
 
 def main():
 
     # Parse arguments
     parser = argparse.ArgumentParser(description='Import words to the database')
-    parser.add_argument('-c', dest='command', metavar='Cmd', default='import', 
-        help='Command to execute (import or clear)')
-    parser.add_argument('-w', '--wordlist', metavar='File', required=True, 
+    parser.add_argument('-c', dest='command', metavar='Cmd', required=True, 
+        help='Command to execute (import, export, clear)')
+    parser.add_argument('-w', '--wordlist', metavar='File', default='wordlist/wordlist', 
         help='File containing the words (one on each line)')
 
     args = vars(parser.parse_args())
@@ -24,7 +25,24 @@ def main():
     if command == 'clear':
         
         words.delete()
-        print 'Table cleared successfully'
+        print "Table cleared successfully"
+
+    elif command == 'export':
+
+        filename = 'wordlist_%s' % datetime.date.today().isoformat().replace('-', '_')
+        with open(filename, 'wb') as fp:
+            
+            words_sorted = [w['word'] for w in list(words.all())]
+            words_sorted = list(set(words_sorted))
+            words_sorted.sort()
+
+            for word in words_sorted:
+                if word == '':
+                    continue
+
+                fp.write("%s\n" % word.encode('utf-8'))
+
+        print "Words exported into file %s" % filename
 
     elif command == 'import':
 
