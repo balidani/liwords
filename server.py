@@ -114,7 +114,7 @@ if __name__ == "__main__":
     db = dataset.connect("sqlite:///liwords.db")
 
     # Initialize puzzles
-    for puzzle in db["puzzle"]:
+    for puzzle in db["puzzles"]:
         puzzle["solution"] = json.loads(puzzle["solution"])
         puzzles.append(puzzle)
 

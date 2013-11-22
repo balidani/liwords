@@ -201,17 +201,17 @@ var addLetter = function(letterObj) {
 var displaySolution = function(solutions) {
 
   for (var i = 0; i < solutions.length; ++i) {
-    var solutionDiv = $("<span/>").append(solutions[i] + " ×");
-    solutionDiv.addClass("liw-solution-box");
+    var solutionSpan = $("<span/>").append(solutions[i] + " ×");
+    solutionSpan.addClass("liw-solution-box");
 
     // Add class according to successful find
     if (foundWords.indexOf(solutions[i]) < 0) {
-      solutionDiv.addClass("liw-solution-missed");
+      solutionSpan.addClass("liw-solution-missed");
     } else {
-      solutionDiv.addClass("liw-solution-found");
+      solutionSpan.addClass("liw-solution-found");
     }
 
-    $(".liw-solutions").append(solutionDiv);
+    $(".liw-solutions").append(solutionSpan);
   }
 
   $(".liw-solutions").fadeIn();
