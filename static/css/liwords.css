@@ -84,8 +84,12 @@
 }
 
 /* Solutions */
-.liw-solutions {
+.liw-solution-container {
+    height: 100px !important;
     font-size: 16px;
+}
+.liw-solutions {
+    height: auto !important;
 }
 .liw-solution-box {
     display: inline-block;
@@ -93,6 +97,7 @@
     padding-left: 4px;
     padding-right: 4px;
     border-radius: 4px;
+    cursor: pointer;
 }
 .liw-solution-box:hover {
     color: #fff;
@@ -102,6 +107,24 @@
 }
 .liw-solution-missed { 
     background-color: #fab;
+}
+
+/* Alert bar */
+.liw-alert {
+    background-color: #ffb;
+    color: #763;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.liw-alert-hide {
+    float: right;
+    margin-right: 15px;
+    font-size: 16px;
+}
+
+/* Admin */
+.admin-container {
+    margin-top: 60px;
 }
 
 /* Misc. */

@@ -1,10 +1,19 @@
 {
-    "seconds": "seconds",
-    "percent": "percent",
-    "words": "words",
-    "new_game": "New Game",
-    "stop_game": "Stop Game",
-    "min": "min",
-    "online": "Online",
-    "public": "Public"
+    "index": {
+        "seconds": "seconds",
+        "percent": "percent",
+        "words": "words",
+        "new_game": "New Game",
+        "stop_game": "Stop Game",
+        "min": "min",
+        "remove_msg_pre": "Marked the word '",
+        "remove_msg_post": "' for removal.",
+        "undo": "Undo?"
+    },
+    "admin": {
+        "word": "Word",
+        "amount": "Amount",
+        "action": "Action",
+        "auth_fail": "Authentication failure"
+    }
 }

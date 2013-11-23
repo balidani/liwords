@@ -1,10 +1,19 @@
+var gameOn = false;
+
+// Puzzle details
 var puzzleObj = {};
+
+// Word formation mechanics
 var currentWord = "", oldWord = "";
 var visited = [];
+
+// Statistics details
 var foundWords = [];
 var score = 0;
 var time = 0;
-var gameOn = false;
+
+// Word moderation
+var lastRemoved = null;
 
 // TODO: Eliminate magic value
 var gridSize = 3;
@@ -201,7 +210,11 @@ var addLetter = function(letterObj) {
 var displaySolution = function(solutions) {
 
   for (var i = 0; i < solutions.length; ++i) {
-    var solutionSpan = $("<span/>").append(solutions[i] + " ×");
+    
+    var solutionSpan = $("<span/>").append(
+      $("<span/>").append(solutions[i])
+    ).append(" ×");
+
     solutionSpan.addClass("liw-solution-box");
 
     // Add class according to successful find
@@ -211,8 +224,25 @@ var displaySolution = function(solutions) {
       solutionSpan.addClass("liw-solution-found");
     }
 
+    // Add click event
+    solutionSpan.click(function (e) {
+      var word = $(this).children().eq(0).text();
+      $("#liw-alert-removed-word").text(word);
+
+      if (removeWord(word, false)) {
+        lastRemoved = $(this);
+        $(this).fadeOut();
+      }
+
+      $(".liw-alert").fadeIn();
+    });
+
     $(".liw-solutions").append(solutionSpan);
   }
+
+  // Vertically align solutions to the bottom
+  var padding = $(".liw-solution-container").innerHeight() - $(".liw-solutions").innerHeight();
+  $(".liw-solution-container").css({top: padding});
 
   $(".liw-solutions").fadeIn();
 
@@ -306,6 +336,28 @@ var shuffleGrid = function() {
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
+ * Request the removal of a word
+ */
+var removeWord = function(word, undo) {
+  var success = false;
+  var url = undo ? "/undo_remove/" : "/remove/";
+  url += word;
+
+
+  $.ajax({
+    url: url,
+    async: false,
+    success: function(data) {
+      if (data.success) {
+        success = true;
+      }
+    }
+  });
+
+  return success;
+}
+
+/*
  * Get a puzzle, display it and start the timer
  */
 var gameStart = function() {
@@ -340,6 +392,8 @@ var gameStart = function() {
 
       // Hide possible previous solutions
       $(".liw-solutions").empty();
+
+      $(".liw-alert").fadeOut();
 
       // Hide pre-game buttons
       // Show post-game buttons
@@ -427,6 +481,22 @@ $(function() {
       return;
 
     shuffleGrid();
+  });
+
+  // Word removal undo handler
+  $("#liw-alert-undo").click(function(e) {
+    if (lastRemoved == null)
+      return;
+
+    if (removeWord($("#liw-alert-removed-word").text(), true)) {
+      lastRemoved.fadeIn();
+      $(".liw-alert").fadeOut();
+    }
+  });
+
+  // Alert hide handler
+  $("#liw-alert-x").click(function(e) {
+    $(".liw-alert").fadeOut();
   });
 
   // This is to disable text selection
