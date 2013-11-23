@@ -178,11 +178,12 @@ def main():
                 'solution': json.dumps(solution)
             }
 
-            if verbose:
-                print "(%d -- %s)" % (result['score'], result['puzzle'])
 
             found_puzzles += 1
             puzzles.insert(result)
+            
+            if verbose:
+                print "%d. (%d -- %s)" % (found_puzzles, result['score'], result['puzzle'])
 
         print "%d puzzles inserted successfully" % amount
 
