@@ -21,12 +21,12 @@ puzzles = []
 language = {}
 
 def random_value(size):
-    """Generate a random string with length `size`"""
+    'Generate a random string with length `size`'
     return ''.join([random.choice(string.ascii_letters + string.digits) for i in range(size)])
 
 @app.route('/solution/<session_id>')
 def solution(session_id):
-    """Return the solution for a session if the time elapsed"""
+    'Return the solution for a session if the time elapsed'
     result = {}
     timestamp = time.time()
 
@@ -54,7 +54,7 @@ def solution(session_id):
 
 @app.route('/puzzle/<int:game_length>')
 def puzzle(game_length):
-    """Create a new session with a random puzzle"""
+    'Create a new session with a random puzzle'
 
     response = {}
 
@@ -100,23 +100,26 @@ def puzzle(game_length):
 
 @app.route('/remove/<word>')
 def remove(word):
-    """Vote for the removal of a word in the database"""
+    'Vote for the removal of a word in the database'
 
-    client_id = hashlib.md5(random_value(16) + request.remote_addr).hexdigest()
+    client_id = hashlib.md5(random_salt + request.remote_addr).hexdigest()
+
+    word_id = db['words'].find_one(word=word)['id']
 
     reports = db['word_reports']
     reports.insert({
         'client': client_id,
-        'word': word
+        'word': word,
+        'word_id': word_id
     })
 
     return jsonify({'success': True})
 
 @app.route('/undo_remove/<word>')
 def undo_remove(word):
-    """Remove the vote for the removal of a word in the database"""
+    'Remove the vote for the removal of a word in the database'
 
-    client_id = hashlib.md5(random_value(16) + request.remote_addr).hexdigest()
+    client_id = hashlib.md5(random_salt + request.remote_addr).hexdigest()
 
     reports = db['word_reports']
     
@@ -127,25 +130,45 @@ def undo_remove(word):
 
     return jsonify({'success': True})
 
-@app.route('/admin/<password>')
-def admin(password):
+def admin_auth(password):
+    'Authenticate the admin user'
 
     # Validate password
     # Password is '7edb760188843cf36a8941c0a90c9c51'
-    # TODO: implement auctal authentication
-    valid = (hashlib.md5(password).hexdigest() == '7bec669f4e754cf24ad3dc063b3a30b9')
+    # TODO: implement actual authentication
+    return hashlib.md5(password).hexdigest() == '7bec669f4e754cf24ad3dc063b3a30b9'
 
-    print password
-    print hashlib.md5(password).hexdigest()
+@app.route('/admin/<password>')
+def admin(password):
+    'Present the administration panel'
+
+    # Authenticate
+    valid = admin_auth(password)
 
     # Get data from the database
-    query_result = list(db.query("SELECT word, COUNT(client) AS count FROM word_reports GROUP BY client"))
+    query_result = list(db.query("SELECT word_id, word, COUNT(client) AS count FROM word_reports GROUP BY word_id, word"))
 
     # Render template
     render = render_template('admin.html', l=language['admin'], auth=valid, data=query_result)
     resp = make_response(render)
 
     return resp
+
+@app.route('/admin/<password>/remove/<word_id>')
+def admin_remove(password, word_id):
+    'Disable the word in the db, flagging it for final removal'
+
+    # Authenticate
+    valid = admin_auth(password)
+
+    # Set enabled to false
+    data = dict(id=word_id, enabled=0)
+    db['words'].update(data, ['id'])
+
+    # Remove from reports
+    db['word_reports'].delete(word_id=word_id)
+
+    return jsonify({'success': True})
 
 @app.route('/')
 def index():
@@ -160,6 +183,9 @@ if __name__ == '__main__':
 
     # Connect to database
     db = dataset.connect('sqlite:///liwords.db')
+
+    # Generate salt
+    random_salt = random_value(32)
 
     # Initialize puzzles
     for puzzle in db['puzzles']:

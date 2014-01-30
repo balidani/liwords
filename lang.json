@@ -15,6 +15,7 @@
         "amount": "Amount",
         "action": "Action",
         "auth_fail": "Authentication failure",
-        "remove": "Remove"
+        "remove": "Remove",
+        "success": "Success"
     }
 }
